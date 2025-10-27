@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:page_creators/pages/project_intent.dart';
 import 'package:page_creators/pages/statistics_section.dart';
 import '../db/propriedades_dao.dart';
-import '../domain/propriedade.dart';
 import '../domain/cancer_article.dart';
+import '../domain/propriedade.dart';
 import '../services/news_api_service.dart';
 import 'creators_section.dart';
 import 'news_section.dart';
+import 'fake_api_section.dart';
+
 
 class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});
@@ -17,15 +19,13 @@ class AboutUsPage extends StatefulWidget {
 
 class _AboutUsPageState extends State<AboutUsPage> {
   late Future<List<Propriedade>> futurePropriedades;
-  late Future<List<CancerArticle>> futureNews;
-  late Future<Map<String, CancerArticle>> futureCancerEstimates;
+  late Future<List<CancerArticle>> futureNews; // se você ainda usa CancerArticle nas notícias
 
   @override
   void initState() {
     super.initState();
     futurePropriedades = PropriedadesDao().listarPropriedades();
     futureNews = NewsApiService().fetchCancerNews();
-    futureCancerEstimates = NewsApiService().fetchLungCancerEstimates();
   }
 
   @override
@@ -43,15 +43,16 @@ class _AboutUsPageState extends State<AboutUsPage> {
         body: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            // Seções do AboutUsPage
             CreatorsSection(futurePropriedades: futurePropriedades),
             const SizedBox(height: 24),
             NewsSection(futureNews: futureNews),
             const SizedBox(height: 24),
-            StatisticsSection(futureCancerEstimates: futureCancerEstimates),
+            const StatisticsSection(),
+            const SizedBox(height: 24),
+            const FakeApiSection(),
             const SizedBox(height: 24),
             const ProjectIntentSection(),
-            const SizedBox(height: 24),
+            const FakeApiSection(),
           ],
         ),
       ),

@@ -4,9 +4,8 @@ import '../domain/cancer_article.dart';
 class NewsApiService {
   final Dio _dio = Dio();
 
-  // Busca notícias sobre câncer de pulmão
   Future<List<CancerArticle>> fetchCancerNews() async {
-    const url = 'https://api.exemplo.com/noticias_cancer'; // Coloque a URL real
+    const url = 'https://api.exemplo.com/noticias_cancer';
     try {
       final response = await _dio.get(url);
       if (response.statusCode == 200) {
@@ -21,7 +20,6 @@ class NewsApiService {
     }
   }
 
-  // Busca a estimativa de casos de câncer de pulmão
   Future<Map<String, CancerArticle>> fetchLungCancerEstimates() async {
     const url = 'https://observatoriodeoncologia.com.br/api/estimativas/2023';
     try {

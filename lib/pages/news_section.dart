@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../domain/cancer_article.dart';
-import '../services/news_api_service.dart';
 
 class NewsSection extends StatelessWidget {
   final Future<List<CancerArticle>> futureNews;

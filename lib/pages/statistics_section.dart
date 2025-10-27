@@ -1,84 +1,100 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_creators/domain/cancer_article.dart';
-import 'package:page_creators/services/news_api_service.dart';
+import 'oncology_api_service.dart';
 
 class StatisticsSection extends StatelessWidget {
-  const StatisticsSection({super.key, required Future<Map<String, dynamic>> futureCancerEstimates});
-
-  Future<Map<String, CancerArticle>> fetchEstimates() async {
-    return NewsApiService().fetchLungCancerEstimates();
-  }
+  const StatisticsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, CancerArticle>>(
-      future: fetchEstimates(),
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: OncologyApiService().fetchCancerStatistics(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Text(
-            'Não foi possível carregar os dados.\n${snapshot.error}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.red),
-          );
-        } else if (snapshot.hasData) {
-          final estimates = snapshot.data!;
-          final male = estimates['homens']!;
-          final female = estimates['mulheres']!;
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'ESTIMATIVA DE NOVOS CASOS DE CÂNCER DE PULMÃO NO BRASIL',
-                      textAlign: TextAlign.center,
-                      style:
-                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItem('Homens', male.newCases),
-                        _buildStatItem('Mulheres', female.newCases),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Fonte: Observatório de Oncologia (Dados de 2023)',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    )
-                  ],
-                ),
-              ),
+            child: Text(
+              '❌ Erro ao carregar dados:\n${snapshot.error}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 14),
             ),
           );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('Nenhum dado disponível no momento.'),
+          );
         }
-        return Container();
-      },
-    );
-  }
 
-  Widget _buildStatItem(String title, int value) {
-    return Column(
-      children: [
-        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Text(
-          value.toString(),
-          style: const TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.deepPurple,
+        final dados = snapshot.data!;
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 6,
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '📊 ESTATÍSTICAS DE CÂNCER NO BRASIL',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ...dados.map((item) {
+                    final tipo = item['tipo_cancer'] ?? 'Tipo não informado';
+                    final casos = item['estimativa'] ?? 'N/A';
+                    final ano = item['ano'] ?? 'Desconhecido';
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              tipo,
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Text(
+                            '$casos casos',
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.black87),
+                          ),
+                          Text(
+                            'Ano: $ano',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Fonte: Observatório de Oncologia (INCA)',
+                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }
