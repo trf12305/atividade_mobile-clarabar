@@ -1,36 +1,31 @@
 import 'package:dio/dio.dart';
-import 'dart:convert';
 
 class OncologyApiService {
   final Dio _dio = Dio();
 
-  Future<List<Map<String, dynamic>>> fetchCancerStatistics() async {
-    const String url = 'https://observatorio.oncologia.org.br/api/estimativas';
+  /// Busca os tipos principais de câncer da SEER API
+  Future<List<Map<String, dynamic>>> fetchPrimaryCancerSites() async {
+    const String url = 'https://api.seer.cancer.gov/rest/disease/primary_site';
 
     try {
       final response = await _dio.get(url);
 
       if (response.statusCode == 200) {
-        dynamic data = response.data;
+        final data = response.data;
 
-        if (data is String) {
-          data = json.decode(data);
-        }
-
-        if (data is Map<String, dynamic>) {
-          return [data];
-        }
-
-        if (data is List) {
+        if (data is Map && data.containsKey('results')) {
+          final List<dynamic> results = data['results'];
+          return List<Map<String, dynamic>>.from(results);
+        } else if (data is List) {
           return List<Map<String, dynamic>>.from(data);
+        } else {
+          throw Exception('Formato inesperado da resposta da SEER API');
         }
-
-        throw Exception('Formato inesperado de resposta da API.');
       } else {
-        throw Exception('Erro HTTP ${response.statusCode}');
+        throw Exception('Erro HTTP: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Erro ao conectar à API: $e');
+      throw Exception('Erro ao conectar à SEER API: $e');
     }
   }
 }

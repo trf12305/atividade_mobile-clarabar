@@ -6,92 +6,68 @@ class StatisticsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final service = OncologyApiService();
+
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: OncologyApiService().fetchCancerStatistics(),
+      future: service.fetchPrimaryCancerSites(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.purple),
+          );
         } else if (snapshot.hasError) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              '❌ Erro ao carregar dados:\n${snapshot.error}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 14),
+              'Erro ao carregar dados: ${snapshot.error}',
+              style: const TextStyle(color: Colors.red),
             ),
           );
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(
-            child: Text('Nenhum dado disponível no momento.'),
+            child: Text('Nenhuma informação disponível no momento.'),
           );
         }
 
-        final dados = snapshot.data!;
+        final sites = snapshot.data!;
 
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Card(
-            elevation: 6,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '📊 ESTATÍSTICAS DE CÂNCER NO BRASIL',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...dados.map((item) {
-                    final tipo = item['tipo_cancer'] ?? 'Tipo não informado';
-                    final casos = item['estimativa'] ?? 'N/A';
-                    final ano = item['ano'] ?? 'Desconhecido';
-
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.indigo[50],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              tipo,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Text(
-                            '$casos casos',
-                            style: const TextStyle(
-                                fontSize: 15, color: Colors.black87),
-                          ),
-                          Text(
-                            'Ano: $ano',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Fonte: Observatório de Oncologia (INCA)',
-                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                  ),
-                ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '📊 Tipos de Câncer (Fonte: SEER - EUA)',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple,
+                ),
               ),
-            ),
+              const SizedBox(height: 10),
+              ...sites.take(20).map((site) => Card(
+                color: const Color(0xFFF3E8FF),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                child: ListTile(
+                  leading: const Icon(Icons.local_hospital,
+                      color: Colors.deepPurple),
+                  title: Text(
+                    site['label'] ?? 'Nome não informado',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF3A0CA3)),
+                  ),
+                  subtitle: Text(
+                    'Código: ${site['value'] ?? 'Sem código'}',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                ),
+              )),
+            ],
           ),
         );
       },

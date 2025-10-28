@@ -55,8 +55,7 @@ class FakeApiSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            // Exibe apenas os 2 primeiros criadores
-            ...criadores.take(2).map((c) => Container(
+            ...criadores.take(4).map((c) => Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color: const Color(0xFFF3E8FF),
@@ -83,7 +82,7 @@ class FakeApiSection extends StatelessWidget {
                   ),
                 ),
                 subtitle: const Text(
-                  'Integrante do Projeto Clara',
+                  'Integrante do Projeto Safe Lung',
                   style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
               ),

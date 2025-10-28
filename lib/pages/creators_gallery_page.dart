@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 class CreatorsGalleryPage extends StatelessWidget {
   final List<Map<String, dynamic>> criadores;
-
   const CreatorsGalleryPage({super.key, required this.criadores});
 
   @override
@@ -12,7 +10,7 @@ class CreatorsGalleryPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF3A0CA3),
         title: const Text(
-          'Galeria de Criadores',
+          'Galeria dos Criadores',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -57,7 +55,7 @@ class CreatorsGalleryPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Integrante do Projeto Clara',
+                    'Integrante do Projeto',
                     style: TextStyle(fontSize: 12, color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),

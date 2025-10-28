@@ -8,6 +8,8 @@ import '../services/news_api_service.dart';
 import 'creators_section.dart';
 import 'news_section.dart';
 import 'fake_api_section.dart';
+import 'statistics_section.dart';
+
 
 
 class AboutUsPage extends StatefulWidget {
@@ -19,7 +21,7 @@ class AboutUsPage extends StatefulWidget {
 
 class _AboutUsPageState extends State<AboutUsPage> {
   late Future<List<Propriedade>> futurePropriedades;
-  late Future<List<CancerArticle>> futureNews; // se você ainda usa CancerArticle nas notícias
+  late Future<List<CancerArticle>> futureNews;
 
   @override
   void initState() {
@@ -53,6 +55,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
             const SizedBox(height: 24),
             const ProjectIntentSection(),
             const FakeApiSection(),
+            const StatisticsSection(),
+
           ],
         ),
       ),

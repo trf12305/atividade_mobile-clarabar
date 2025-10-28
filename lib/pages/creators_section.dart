@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../db/propriedades_dao.dart';
 import '../domain/propriedade.dart';
 import '../widget/card_propriedade.dart';
@@ -28,7 +27,7 @@ class CreatorsSection extends StatelessWidget {
             itemBuilder: (context, i) => CardPropriedade(propriedade: lista[i]),
           );
         } else if (snapshot.hasError) {
-          return const Center(child: Text('Erro ao carregar criadores'));
+          return const Center(child: Text('Erro ao carregar'));
         } else {
           return const Center(child: CircularProgressIndicator());
         }
